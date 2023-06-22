@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "24609539264",
+    "project_id": "boardbuddies-11255",
+    "storage_bucket": "boardbuddies-11255.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24609539264:android:4f8da677cd8d672a3e5925",
+        "android_client_info": {
+          "package_name": "pro.shivanshtariyal.boardbuddies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24609539264-p7cmg1cb5m0cqvf4jqk37o3kbfneg9sr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYDM68ga9eowSK3tqLlv6GEgyDHTtp2vs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24609539264-p7cmg1cb5m0cqvf4jqk37o3kbfneg9sr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
