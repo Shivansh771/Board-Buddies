@@ -11,6 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import pro.shivanshtariyal.boardbuddies.R
 import pro.shivanshtariyal.boardbuddies.databinding.ActivitySignUpBinding
+import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
+import pro.shivanshtariyal.boardbuddies.models.User
 
 class SignUpActivity : BaseActivity() {
     private lateinit var toolbar: Toolbar
@@ -45,6 +47,11 @@ class SignUpActivity : BaseActivity() {
         }
 
     }
+     fun userRegisteredSuccess(){
+        Toast.makeText(this@SignUpActivity,"Registered Success",Toast.LENGTH_SHORT).show()
+        FirebaseAuth.getInstance().signOut()
+        finish()
+    }
     private fun registerUser(){
         val name:String=binding.etName.text.toString().trim{it<=' '}
         val email:String=binding.etEmail.text.toString().trim{it<=' '}
@@ -58,10 +65,8 @@ class SignUpActivity : BaseActivity() {
                 if (task.isSuccessful) {
                     val firebaseUser: FirebaseUser = task.result!!.user!!
                     val regesteredEmail = firebaseUser.email!!
-                    Toast.makeText(this@SignUpActivity, "You have regitered", Toast.LENGTH_SHORT)
-                        .show()
-                    FirebaseAuth.getInstance().signOut()
-                    finish()
+                    val user= User(firebaseUser.uid,name,regesteredEmail)
+                    FirestoreClass().registerUser(this,user)
                 } else {
                     Toast.makeText(
                         this@SignUpActivity,

@@ -12,6 +12,8 @@ import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
 import pro.shivanshtariyal.boardbuddies.R
 import pro.shivanshtariyal.boardbuddies.databinding.ActivitySignInBinding
+import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
+import pro.shivanshtariyal.boardbuddies.models.User
 
 class SignInActivity : BaseActivity() {
     private lateinit var toolbar:Toolbar
@@ -49,6 +51,11 @@ class SignInActivity : BaseActivity() {
 
 
     }
+    fun signInSuccess(user:User){
+        hideProgressDialog()
+        startActivity(Intent(this,MainActivity::class.java))
+        finish()
+    }
     private fun signInRegisteredUser(){
         val email:String=binding.etEmail.text.toString().trim{it <= ' '}
         val password:String=binding.etPassword.text.toString().trim{it<=' '}
@@ -61,7 +68,7 @@ class SignInActivity : BaseActivity() {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("TAG", "signInWithEmail:success")
                         val user = auth.currentUser
-                        startActivity(Intent(this,MainActivity::class.java))
+                        FirestoreClass().signInUser(this@SignInActivity)
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w("Signin", "signInWithEmail:failure", task.exception)
