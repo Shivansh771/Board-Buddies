@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import pro.shivanshtariyal.boardbuddies.R
+import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,8 +34,15 @@ class SplashActivity : AppCompatActivity() {
 
 
         Handler().postDelayed({
+
+
+            var currentUserID=FirestoreClass().getCurrentUserId()
+            if(currentUserID.isNotEmpty()){
+                startActivity(Intent(this,MainActivity::class.java))
+                finish()
+            }else{
          startActivity(Intent(this, IntroActivity::class.java))
-            finish()
+            finish()}
         },1001)
 
 
