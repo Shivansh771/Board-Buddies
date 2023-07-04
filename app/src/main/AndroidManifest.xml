@@ -13,7 +13,7 @@
         android:theme="@style/Theme.BoardBuddies"
         tools:targetApi="31">
         <activity
-            android:name=".BaseActivity"
+            android:name=".activities.BaseActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -63,7 +63,8 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
