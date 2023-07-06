@@ -37,6 +37,20 @@ class FirestoreClass {
         }
         return currentUserID
     }
+    fun getBoardDetails(activity: TaskListActivity,documentId:String){
+        mFirestore.collection(Constants.BOARDS)
+            .document(documentId)
+            .get()
+            .addOnSuccessListener {
+                    document->
+                Log.i(activity.javaClass.simpleName,document.toString())
+                activity.boardDetails(document.toObject(Board::class.java)!!)
+            }.addOnFailureListener{
+                    e->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName,"Error where showing boards")
+            }
+    }
     fun updateUserProfileData(activity: MyProfileActivity,userHashMap:HashMap<String,Any>){
         mFirestore.collection(Constants.USERS)
             .document(getCurrentUserId())
