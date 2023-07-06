@@ -29,7 +29,7 @@ open class BoardItemsAdapter (private val context:Context, private var list:Arra
                 .load(model.image)
                 .centerCrop()
                 .placeholder(R.drawable.ic_board_place_holder)
-                .into(holder.itemView.findViewById(R.id.iv_board_image))
+                .into(holder.itemView.findViewById(R.id.iv_board_image_item_board))
             holder.itemView.findViewById<TextView>(R.id.tv_name).text=model.name
             holder.itemView.findViewById<TextView>(R.id.tv_created_by).text="Created By: ${model.createdBy}"
             holder.itemView.setOnClickListener{
