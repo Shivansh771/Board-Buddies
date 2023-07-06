@@ -187,8 +187,9 @@ class MyProfileActivity : BaseActivity() {
                     uri->
                     Log.i("Downloadable image uri",uri.toString())
                     mProfileImageUrl=uri.toString()
-                    hideProgressDialog()
                     updateUserProfileData()
+                    hideProgressDialog()
+
                 }
 
             }.addOnFailureListener{
@@ -200,9 +201,11 @@ class MyProfileActivity : BaseActivity() {
     }
 
     fun profileUpdateSuccess(){
-        hideProgressDialog()
         setResult(Activity.RESULT_OK)
+        hideProgressDialog()
+
         finish()
+
 
     }
 }
