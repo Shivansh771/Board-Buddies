@@ -52,7 +52,7 @@ class FirestoreClass {
                 Toast.makeText(activity,"Profile update error",Toast.LENGTH_SHORT).show()
             }
     }
-    fun LoadUserData(activity: Activity){
+    fun LoadUserData(activity: Activity,readBoardsList:Boolean=false){
         mFirestore.collection(Constants.USERS)
             .document(getCurrentUserId()).get()
             .addOnSuccessListener {document->
@@ -66,7 +66,7 @@ class FirestoreClass {
                     }
                     is MainActivity->{
                         if (loggedInUser != null) {
-                            activity.updateNavigationUserDetails(loggedInUser)
+                            activity.updateNavigationUserDetails(loggedInUser,readBoardsList)
                         }
                     }
                     is MyProfileActivity->{
@@ -102,6 +102,27 @@ class FirestoreClass {
                 exception->
                     activity.hideProgressDialog()
                     Log.e(activity.javaClass.simpleName,"Error while creating a board",exception)
+            }
+    }
+    fun getBoardsList(activity: MainActivity){
+        mFirestore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                document->
+                    Log.i(activity.javaClass.simpleName,document.documents.toString())
+                val boardList:ArrayList<Board> = ArrayList()
+                for(i in document.documents){
+                    val board=i.toObject(Board::class.java)!!
+                    board.documentId=i.id
+                    boardList.add(board)
+                }
+                activity.populateBoardsListToUI(boardList)
+                activity.hideProgressDialog()
+            }.addOnFailureListener{
+                e->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName,"Error where showing boards")
             }
     }
 

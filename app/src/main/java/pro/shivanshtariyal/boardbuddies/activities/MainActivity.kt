@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.ImageView
@@ -13,19 +14,24 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import pro.shivanshtariyal.boardbuddies.R
+import pro.shivanshtariyal.boardbuddies.adapters.BoardItemsAdapter
 import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
 import pro.shivanshtariyal.boardbuddies.models.User
+import pro.shivanshtariyal.boardbuddies.utils.Board
 import pro.shivanshtariyal.boardbuddies.utils.Constants
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener{
     private lateinit var mUserName:String
     companion object{
         const val MY_PROFILE_REQ_CODE:Int=11
+        const val CREATE_BOARD_REQUEST_CODE=22
     }
     private lateinit var toolbar: Toolbar
     private lateinit var fab:FloatingActionButton
@@ -33,6 +39,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var navView:NavigationView
       lateinit var navUserImage: ImageView
       lateinit var tvUserName: TextView
+      lateinit var rvBoardList:RecyclerView
+      lateinit var tvNoBoard:TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +59,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         }
-        FirestoreClass().LoadUserData(this)
+        FirestoreClass().LoadUserData(this,true)
         fab.setBackgroundResource(R.drawable.appbar_theme)
+
         fab.setOnClickListener{
             val intent=Intent(this,CreateBoardActivity::class.java)
+
             intent.putExtra(Constants.NAME,mUserName)
-            startActivity(intent)
+            startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
 
         }
         navView.setNavigationItemSelectedListener(this)
@@ -79,7 +89,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
     }
-    fun updateNavigationUserDetails(user: User){
+    fun updateNavigationUserDetails(user: User,readBoardsList:Boolean){
         mUserName=user.name
         tvUserName=findViewById(R.id.tv_username)
         navUserImage=findViewById(R.id.user_image)
@@ -90,7 +100,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             .placeholder(R.drawable.ic_user_place_holder)
             .into(navUserImage)
         tvUserName.text=user.name
-
+        if(readBoardsList){
+            showProgressDialog()
+            FirestoreClass().getBoardsList(this)
+        }
 
     }
 
@@ -108,7 +121,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode==Activity.RESULT_OK && requestCode== MY_PROFILE_REQ_CODE){
             FirestoreClass().LoadUserData(this)
-        }else{
+        }else if(resultCode==Activity.RESULT_OK && requestCode== CREATE_BOARD_REQUEST_CODE){
+            FirestoreClass().getBoardsList(this)
+
+        }
+        else{
             Log.e("Cancelled","Cancel")
         }
     }
@@ -131,5 +148,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+    fun populateBoardsListToUI(boardList:ArrayList<Board>){
+        rvBoardList=findViewById(R.id.rv_boards_list)
+        tvNoBoard=findViewById(R.id.tv_no_boards_available)
+        hideProgressDialog()
+        if(boardList.size>0){
+            tvNoBoard.visibility=View.GONE
+            rvBoardList.visibility=View.VISIBLE
+            rvBoardList.layoutManager=LinearLayoutManager(this)
+            rvBoardList.setHasFixedSize(true)
+            val adapter=BoardItemsAdapter(this,boardList)
+            rvBoardList.adapter=adapter
+            adapter.setOnClickListener(object :BoardItemsAdapter.OnClickListener{
+                override fun onClick(position: Int, model: Board) {
+                    startActivity(Intent(this@MainActivity,TaskListActivity::class.java))
+                }
+
+            })
+
+
+        }else{
+            rvBoardList.visibility=View.GONE
+            tvNoBoard.visibility=View.VISIBLE
+        }
     }
 }
