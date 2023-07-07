@@ -14,6 +14,7 @@ import pro.shivanshtariyal.boardbuddies.utils.Board
 import pro.shivanshtariyal.boardbuddies.utils.Constants
 
 class TaskListActivity : BaseActivity() {
+    private lateinit var mBoardDetails:Board
     private lateinit var toolbar: Toolbar
     private lateinit var rvTaskList:RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +31,9 @@ class TaskListActivity : BaseActivity() {
         FirestoreClass().getBoardDetails(this,boardDocumentId)
     }
     fun boardDetails(board: Board){
+        mBoardDetails=board
         hideProgressDialog()
-        setupActionBar(board.name)
+        setupActionBar()
         val addTaskList=Task(resources.getString(R.string.add_list))
         board.taskList.add(addTaskList)
         rvTaskList.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
@@ -42,13 +44,13 @@ class TaskListActivity : BaseActivity() {
 
 
     }
-    private fun setupActionBar(title: String){
+    private fun setupActionBar(){
         setSupportActionBar(toolbar)
         val actionBar=supportActionBar
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white)
-            actionBar.title= title
+            actionBar.title= mBoardDetails.name
         }
         toolbar.setBackgroundResource(R.drawable.appbar_theme)
         toolbar.setNavigationOnClickListener{
@@ -56,5 +58,34 @@ class TaskListActivity : BaseActivity() {
         }
 
 
+    }
+    fun addUpdateTaskListSuccess(){
+        hideProgressDialog()
+        showProgressDialog()
+        FirestoreClass().getBoardDetails(this,mBoardDetails.documentId)
+
+
+    }
+    fun createTaskList(taskListName:String){
+        val task=Task(taskListName,FirestoreClass().getCurrentUserId())
+        mBoardDetails.taskList.add(0,task)
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        showProgressDialog()
+        FirestoreClass().addUpdateTaskList(this,mBoardDetails)
+    }
+    fun updateTaskList(position:Int,listName:String,model:Task){
+        val task=Task(listName,model.createdBy)
+        mBoardDetails.taskList[position]=task
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size -1)
+        showProgressDialog()
+        FirestoreClass().addUpdateTaskList(this,mBoardDetails)
+
+    }
+    fun deleteTaskList(position: Int){
+        mBoardDetails.taskList.removeAt(position)
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+
+        showProgressDialog()
+        FirestoreClass().addUpdateTaskList(this,mBoardDetails)
     }
 }

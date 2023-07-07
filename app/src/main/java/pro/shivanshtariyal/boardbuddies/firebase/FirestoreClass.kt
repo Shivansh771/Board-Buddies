@@ -13,6 +13,7 @@ import pro.shivanshtariyal.boardbuddies.utils.Constants
 
 class FirestoreClass {
 
+
     private val mFirestore=FirebaseFirestore.getInstance()
 
     fun registerUser(activity: SignUpActivity, userInfo: User){
@@ -44,7 +45,9 @@ class FirestoreClass {
             .addOnSuccessListener {
                     document->
                 Log.i(activity.javaClass.simpleName,document.toString())
-                activity.boardDetails(document.toObject(Board::class.java)!!)
+                val board=document.toObject(Board::class.java)!!
+                board.documentId=document.id
+                activity.boardDetails(board)
             }.addOnFailureListener{
                     e->
                 activity.hideProgressDialog()
@@ -118,6 +121,25 @@ class FirestoreClass {
                     Log.e(activity.javaClass.simpleName,"Error while creating a board",exception)
             }
     }
+    fun addUpdateTaskList(activity: TaskListActivity, board: Board) {
+
+        val taskListHashMap = HashMap<String, Any>()
+        taskListHashMap[Constants.TASK_LIST] = board.taskList
+
+        mFirestore.collection(Constants.BOARDS)
+            .document(board.documentId)
+            .update(taskListHashMap)
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName, "TaskList updated successfully.")
+
+                activity.addUpdateTaskListSuccess()
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+            }
+    }
+
     fun getBoardsList(activity: MainActivity){
         mFirestore.collection(Constants.BOARDS)
             .whereArrayContains(Constants.ASSIGNED_TO,getCurrentUserId())
