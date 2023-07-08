@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import pro.shivanshtariyal.boardbuddies.R
 import pro.shivanshtariyal.boardbuddies.adapters.TaskListItemsAdapter
 import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
+import pro.shivanshtariyal.boardbuddies.models.Card
 import pro.shivanshtariyal.boardbuddies.models.Task
 import pro.shivanshtariyal.boardbuddies.utils.Board
 import pro.shivanshtariyal.boardbuddies.utils.Constants
@@ -87,5 +88,25 @@ class TaskListActivity : BaseActivity() {
 
         showProgressDialog()
         FirestoreClass().addUpdateTaskList(this,mBoardDetails)
+    }
+    fun addCardToTaskList(position: Int,cardName:String){
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size-1)
+        val cardAssignedUserList: ArrayList<String> = ArrayList()
+
+        cardAssignedUserList.add(FirestoreClass().getCurrentUserId())
+        val card= Card(cardName,FirestoreClass().getCurrentUserId(),cardAssignedUserList)
+        val cardList=mBoardDetails.taskList[position].cards
+        cardList.add(card)
+
+        val task= Task(
+            mBoardDetails.taskList[position].title,
+            mBoardDetails.taskList[position].createdBy,
+            cardList
+        )
+
+        mBoardDetails.taskList[position]=task
+        showProgressDialog()
+        FirestoreClass().addUpdateTaskList(this,mBoardDetails)
+
     }
 }
