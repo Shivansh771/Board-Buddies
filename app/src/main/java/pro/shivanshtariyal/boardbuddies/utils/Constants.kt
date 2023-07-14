@@ -23,6 +23,8 @@ object Constants {
     const val ID:String="id"
     const val EMAIL:String="email"
      const val PICK_IMAGE_REQUEST_CODE=2
+    const val TASK_LIST_ITEM_POS:String="task_list_item_position"
+    const val CARD_LIST_ITEM_POS:String="card_list_item_position"
     fun showImageChooser(activity:Activity){
         val gallery= Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 

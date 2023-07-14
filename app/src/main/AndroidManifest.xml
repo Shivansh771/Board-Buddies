@@ -18,8 +18,10 @@
         android:theme="@style/Theme.BoardBuddies"
         tools:targetApi="31">
         <activity
-            android:name=".CardDetailsActivity"
-            android:exported="false">
+            android:name=".activities.CardDetailsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
