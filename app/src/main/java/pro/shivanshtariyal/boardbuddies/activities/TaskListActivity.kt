@@ -16,6 +16,7 @@ import pro.shivanshtariyal.boardbuddies.adapters.TaskListItemsAdapter
 import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
 import pro.shivanshtariyal.boardbuddies.models.Card
 import pro.shivanshtariyal.boardbuddies.models.Task
+import pro.shivanshtariyal.boardbuddies.models.User
 import pro.shivanshtariyal.boardbuddies.utils.Board
 import pro.shivanshtariyal.boardbuddies.utils.Constants
 
@@ -24,6 +25,7 @@ class TaskListActivity : BaseActivity() {
     private lateinit var toolbar: Toolbar
     private lateinit var rvTaskList:RecyclerView
     private lateinit var mBoardDocumentId:String
+    private lateinit var mAssignedMembersDetailsList:ArrayList<User>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
@@ -52,6 +54,7 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAIL,mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POS,taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POS,cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMembersDetailsList)
         startActivityForResult(intent, CARD_DETAILS_REQ_CODE)
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -83,7 +86,8 @@ class TaskListActivity : BaseActivity() {
         rvTaskList.setHasFixedSize(true)
         val adapter=TaskListItemsAdapter(this,board.taskList)
         rvTaskList.adapter=adapter
-
+        showProgressDialog()
+        FirestoreClass().getAssignedMembersListDetails(this,mBoardDetails.assignedTo)
 
 
     }
@@ -150,6 +154,10 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog()
         FirestoreClass().addUpdateTaskList(this,mBoardDetails)
 
+    }
+    fun boardMembersDetailsList(list:ArrayList<User>){
+        mAssignedMembersDetailsList=list
+        hideProgressDialog()
     }
     companion object{
         const val MEMBERS_REQUEST_CODE:Int=13

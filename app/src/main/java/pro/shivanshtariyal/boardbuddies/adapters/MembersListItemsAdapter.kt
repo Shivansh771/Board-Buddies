@@ -53,10 +53,13 @@ open class MemberListItemsAdapter(
                 .load(model.image)
                 .centerCrop()
                 .placeholder(R.drawable.ic_user_place_holder)
-                .into(holder.itemView.findViewById<ImageView>(R.id.iv_member_image))
+                .into(holder.itemView.findViewById(R.id.iv_member_image))
 
             holder.itemView.findViewById<TextView>(R.id.tv_member_name).text = model.name
             holder.itemView.findViewById<TextView>(R.id.tv_member_email).text = model.email
+            if(model.selected){
+
+            }
         }
     }
 
@@ -71,5 +74,8 @@ open class MemberListItemsAdapter(
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      */
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    interface OnClickListener{
+        fun OnClick(position: Int,user: User,action:String)
+    }
 }
 // END

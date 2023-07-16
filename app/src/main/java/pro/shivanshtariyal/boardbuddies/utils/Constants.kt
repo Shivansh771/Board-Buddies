@@ -21,8 +21,12 @@ object Constants {
     const val TASK_LIST:String="taskList"
     const val BOARD_DETAIL:String="board_detail"
     const val ID:String="id"
+
+    const val SELECT:String="Select"
+    const val UN_SELECT:String="UnSelect"
     const val EMAIL:String="email"
      const val PICK_IMAGE_REQUEST_CODE=2
+    const val BOARD_MEMBERS_LIST:String="board_members_list"
     const val TASK_LIST_ITEM_POS:String="task_list_item_position"
     const val CARD_LIST_ITEM_POS:String="card_list_item_position"
     fun showImageChooser(activity:Activity){
