@@ -129,5 +129,6 @@
     <dimen name="item_member_email_text_size">14sp</dimen>
     <dimen name="item_member_divider_height">0.3dp</dimen>
     <dimen name="item_member_divider_marginTop">5dp</dimen>
+    <dimen name="item_selected_member_image_size">45dp</dimen>
     <!-- END -->
 </resources>

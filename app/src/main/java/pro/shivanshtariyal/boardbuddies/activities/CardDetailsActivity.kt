@@ -17,6 +17,7 @@ import pro.shivanshtariyal.boardbuddies.dialogs.LabelColorListDialog
 import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
 import pro.shivanshtariyal.boardbuddies.models.Card
 import pro.shivanshtariyal.boardbuddies.models.Task
+import pro.shivanshtariyal.boardbuddies.models.User
 import pro.shivanshtariyal.boardbuddies.utils.Board
 import pro.shivanshtariyal.boardbuddies.utils.Constants
 
@@ -27,6 +28,7 @@ class CardDetailsActivity : BaseActivity() {
     private var mCardPosition=-1
     private lateinit var editTextCardDetails:EditText
     private lateinit var btnUpdate:Button
+    private lateinit var mMembersDetailsList:ArrayList<User>
     private var mSelectedColor=""
 
     private lateinit var tvSelectedlabelColor:TextView
@@ -162,6 +164,9 @@ class CardDetailsActivity : BaseActivity() {
         }
         if(intent.hasExtra(Constants.CARD_LIST_ITEM_POS)){
             mCardPosition=intent.getIntExtra(Constants.CARD_LIST_ITEM_POS,-1)
+        }
+        if(intent.hasExtra(Constants.BOARD_MEMBERS_LIST)){
+            mMembersDetailsList=intent.getParcelableArrayListExtra(Constants.BOARD_MEMBERS_LIST)!!
         }
     }
     private fun updateCardDetails(){
