@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import pro.shivanshtariyal.boardbuddies.R
 import pro.shivanshtariyal.boardbuddies.models.User
+import pro.shivanshtariyal.boardbuddies.utils.Constants
 
 
 open class MemberListItemsAdapter(
     private val context: Context,
     private var list: ArrayList<User>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
+    private var onClickListener:OnClickListener?=null
     /**
      * Inflates the item views which is designed in xml layout file
      *
@@ -58,6 +59,22 @@ open class MemberListItemsAdapter(
             holder.itemView.findViewById<TextView>(R.id.tv_member_name).text = model.name
             holder.itemView.findViewById<TextView>(R.id.tv_member_email).text = model.email
             if(model.selected){
+                holder.itemView.findViewById<ImageView>(R.id.iv_selected_member).visibility=View.VISIBLE
+
+            }
+            else{
+                holder.itemView.findViewById<ImageView>(R.id.iv_selected_member).visibility=View.GONE
+
+            }
+            holder.itemView.setOnClickListener{
+                if(onClickListener!=null){
+                    if(model.selected){
+                        onClickListener!!.OnClick(position,model,Constants.UN_SELECT)
+                    }else{
+                        onClickListener!!.OnClick(position,model,Constants.SELECT)
+
+                    }
+                }
 
             }
         }
@@ -68,6 +85,9 @@ open class MemberListItemsAdapter(
      */
     override fun getItemCount(): Int {
         return list.size
+    }
+    fun setOnClickListener(onClickListener: OnClickListener){
+        this.onClickListener=onClickListener
     }
 
     /**

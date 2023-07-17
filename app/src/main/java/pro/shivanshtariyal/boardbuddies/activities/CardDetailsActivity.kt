@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import pro.shivanshtariyal.boardbuddies.R
 import pro.shivanshtariyal.boardbuddies.dialogs.LabelColorListDialog
+import pro.shivanshtariyal.boardbuddies.dialogs.MembersListDialog
 import pro.shivanshtariyal.boardbuddies.firebase.FirestoreClass
 import pro.shivanshtariyal.boardbuddies.models.Card
 import pro.shivanshtariyal.boardbuddies.models.Task
@@ -57,6 +58,10 @@ class CardDetailsActivity : BaseActivity() {
         tvSelectedlabelColor.setOnClickListener{
             labelColorsListDialog()
         }
+       var tvSelectMember:TextView=findViewById(R.id.tv_select_members)
+       tvSelectMember.setOnClickListener{
+           membersListDialog()
+       }
 
     }
     private fun alertDialogForDeleteCard(cardName: String) {
@@ -168,6 +173,35 @@ class CardDetailsActivity : BaseActivity() {
         if(intent.hasExtra(Constants.BOARD_MEMBERS_LIST)){
             mMembersDetailsList=intent.getParcelableArrayListExtra(Constants.BOARD_MEMBERS_LIST)!!
         }
+    }
+    private fun membersListDialog(){
+        var cardAssignedMembersList=mBoardDetails.taskList[mTaskListPos].cards[mCardPosition].assignedTo
+        if(cardAssignedMembersList.size>0){
+            for(i in mMembersDetailsList.indices){
+                for(j in cardAssignedMembersList){
+                    if(mMembersDetailsList[i].id==j){
+                        mMembersDetailsList[i].selected=true
+                    }
+                }
+            }
+        }else{
+            for(i in mMembersDetailsList.indices){
+                mMembersDetailsList[i].selected=false
+            }
+
+        }
+        val listDialog= object : MembersListDialog(
+            this,
+            mMembersDetailsList,
+            resources.getString(R.string.str_select_members)
+
+        ){
+            override fun onItemSelected(user: User, action: String) {
+               //todo
+            }
+
+        }
+        listDialog.show()
     }
     private fun updateCardDetails(){
         val card=Card(

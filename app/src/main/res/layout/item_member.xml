@@ -6,6 +6,15 @@
             <TextView android:id="@+id/tv_member_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/primaryText" android:textSize="@dimen/item_member_name_text_size" tools:text="Member Name"/>
             <TextView android:id="@+id/tv_member_email" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/secondaryText" android:textSize="@dimen/item_member_email_text_size" tools:text="Email"/>
         </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv_selected_member"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="@dimen/item_label_color_selected_image_marginEnd"
+            android:contentDescription="@string/image_contentDescription"
+            android:src="@drawable/ic_baseline_check_color_24"
+            android:visibility="gone"/>
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="@dimen/item_member_divider_height" android:layout_marginTop="@dimen/item_member_divider_marginTop" android:background="@color/divider_color"/>
 </LinearLayout>
