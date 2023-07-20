@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pro.shivanshtariyal.boardbuddies.R
+import pro.shivanshtariyal.boardbuddies.activities.TaskListActivity
 import pro.shivanshtariyal.boardbuddies.models.Card
+import pro.shivanshtariyal.boardbuddies.models.SelectedMembers
 
 // TODO (Step 3: Create an adapter class for cards list.)
 // START
@@ -49,22 +52,70 @@ open class CardListItemsAdapter(
         val model = list[position]
 
         if (holder is MyViewHolder) {
-            if(model.labelColor.isNotEmpty()){
-                holder.itemView.findViewById<View>(R.id.view_label_color).visibility=View.VISIBLE
-                holder.itemView.findViewById<View>(R.id.view_label_color).setBackgroundColor(Color.parseColor(model.labelColor))
-            }else{
-                holder.itemView.findViewById<View>(R.id.view_label_color).visibility=View.GONE
 
+            if (model.labelColor.isNotEmpty()) {
+                holder.itemView.findViewById<View>(R.id.view_label_color).visibility = View.VISIBLE
+                holder.itemView.findViewById<View>(R.id.view_label_color).setBackgroundColor(Color.parseColor(model.labelColor))
+            } else {
+                holder.itemView.findViewById<View>(R.id.view_label_color).visibility = View.GONE
             }
 
             holder.itemView.findViewById<TextView>(R.id.tv_card_name).text = model.name
-            holder.itemView.setOnClickListener{
-                if(onClickListener!=null){
-                    onClickListener!!.onClick(position)
+
+            // TODO (Step 3: Now with use of public list of Assigned members detail List populate the recyclerView for Assigned Members.)
+            // START
+            if ((context as TaskListActivity).mAssignedMembersDetailsList.size > 0) {
+                // A instance of selected members list.
+                val selectedMembersList: ArrayList<SelectedMembers> = ArrayList()
+
+                // Here we got the detail list of members and add it to the selected members list as required.
+                for (i in context.mAssignedMembersDetailsList.indices) {
+                    for (j in model.assignedTo) {
+                        if (context.mAssignedMembersDetailsList[i].id == j) {
+                            val selectedMember = SelectedMembers(
+                                context.mAssignedMembersDetailsList[i].id,
+                                context.mAssignedMembersDetailsList[i].image
+                            )
+
+                            selectedMembersList.add(selectedMember)
+                        }
+                    }
+                }
+
+                if (selectedMembersList.size > 0) {
+
+                    if (selectedMembersList.size == 1 && selectedMembersList[0].id == model.createdBy) {
+                        holder.itemView.findViewById<RecyclerView>(R.id.rv_card_selected_members_list).visibility = View.GONE
+                    } else {
+                        holder.itemView.findViewById<RecyclerView>(R.id.rv_card_selected_members_list).visibility = View.VISIBLE
+
+                        holder.itemView.findViewById<RecyclerView>(R.id.rv_card_selected_members_list).layoutManager =
+                            GridLayoutManager(context, 4)
+                        val adapter = CardMembersListItemsAdapter(context, selectedMembersList, false)
+                        holder.itemView.findViewById<RecyclerView>(R.id.rv_card_selected_members_list).adapter = adapter
+                        adapter.setOnClickListener(object :
+                            CardMembersListItemsAdapter.OnClickListener {
+                            override fun onClick() {
+                                if (onClickListener != null) {
+                                    onClickListener!!.onClick(holder.adapterPosition)
+                                }
+                            }
+                        })
+                    }
+                } else {
+                    holder.itemView.findViewById<RecyclerView>(R.id.rv_card_selected_members_list).visibility = View.GONE
+                }
+            }
+            // END
+
+            holder.itemView.setOnClickListener {
+                if (onClickListener != null) {
+                    onClickListener!!.onClick(holder.adapterPosition)
                 }
             }
         }
     }
+
 
     /**
      * Gets the number of items in the list

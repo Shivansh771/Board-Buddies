@@ -11,7 +11,7 @@ import pro.shivanshtariyal.boardbuddies.R
 import pro.shivanshtariyal.boardbuddies.models.SelectedMembers
 
 open class CardMembersListItemsAdapter (private val context: Context,
-private val list:ArrayList<SelectedMembers>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+private val list:ArrayList<SelectedMembers>,private val assignedMembers:Boolean) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onClickListener: OnClickListener?=null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
        return TaskListItemsAdapter.MyViewHolder(LayoutInflater.from(context).inflate(
@@ -24,7 +24,7 @@ private val list:ArrayList<SelectedMembers>) : RecyclerView.Adapter<RecyclerView
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model=list[position]
         if(holder is TaskListItemsAdapter.MyViewHolder){
-            if(position==list.size-1){
+            if(position==list.size-1 && assignedMembers){
                 holder.itemView.findViewById<ImageView>(R.id.iv_add_member).visibility=View.VISIBLE
                 holder.itemView.findViewById<ImageView>(R.id.iv_selected_member_image).visibility=View.GONE
             }else{
