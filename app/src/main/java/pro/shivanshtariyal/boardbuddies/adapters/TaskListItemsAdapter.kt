@@ -13,6 +13,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.w3c.dom.Text
@@ -20,8 +22,11 @@ import pro.shivanshtariyal.boardbuddies.R
 import pro.shivanshtariyal.boardbuddies.activities.TaskListActivity
 import pro.shivanshtariyal.boardbuddies.models.Card
 import pro.shivanshtariyal.boardbuddies.models.Task
+import java.util.Collections
 
 open class TaskListItemsAdapter(private val context:Context,private var list:ArrayList<Task>):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+    private var mPositionDraggedFrom=-1
+    private var mPositionDraggedTo=-1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view=LayoutInflater.from(context).inflate(R.layout.item_task,parent,false)
         val layoutParams=LinearLayout.LayoutParams((parent.width *0.7).toInt(),LinearLayout.LayoutParams.WRAP_CONTENT
@@ -32,9 +37,9 @@ open class TaskListItemsAdapter(private val context:Context,private var list:Arr
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val model=list[position]
+        val model=list[holder.adapterPosition]
         if(holder is MyViewHolder){
-            if(position==list.size-1){
+            if(holder.adapterPosition==list.size-1){
                 holder.itemView.findViewById<TextView>(R.id.tv_add_task_list).visibility=View.VISIBLE
                 holder.itemView.findViewById<LinearLayout>(R.id.ll_task_item).visibility=View.GONE
             }
@@ -77,14 +82,14 @@ open class TaskListItemsAdapter(private val context:Context,private var list:Arr
                 val listName=holder.itemView.findViewById<EditText>(R.id.et_edit_task_list_name).text.toString()
                 if(listName.isNotEmpty()){
                     if(context is TaskListActivity){
-                        context.updateTaskList(position,listName,model)
+                        context.updateTaskList(holder.adapterPosition,listName,model)
                     }
                 }else{
                     Toast.makeText(context,"Please enter a List name",Toast.LENGTH_SHORT).show()
                 }
             }
             holder.itemView.findViewById<ImageButton>(R.id.ib_delete_list).setOnClickListener{
-                alertDialogForDeleteList(position,model.title)
+                alertDialogForDeleteList(holder.adapterPosition,model.title)
             }
             holder.itemView.findViewById<TextView>(R.id.tv_add_card).setOnClickListener{
                 holder.itemView.findViewById<TextView>(R.id.tv_add_card).visibility=View.GONE
@@ -98,7 +103,7 @@ open class TaskListItemsAdapter(private val context:Context,private var list:Arr
                 val cardName=holder.itemView.findViewById<EditText>(R.id.et_card_name).text.toString()
                 if(cardName.isNotEmpty()){
                     if(context is TaskListActivity){
-                        context.addCardToTaskList(position,cardName)
+                        context.addCardToTaskList(holder.adapterPosition,cardName)
                     }
                 }else{
                     Toast.makeText(context,"Please enter Card name",Toast.LENGTH_SHORT).show()
@@ -117,6 +122,51 @@ open class TaskListItemsAdapter(private val context:Context,private var list:Arr
                     }
                 }
             )
+            val dividerItemDecoration=DividerItemDecoration(context,DividerItemDecoration.VERTICAL)
+
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).addItemDecoration(dividerItemDecoration)
+            val helper =ItemTouchHelper(
+                object : ItemTouchHelper.SimpleCallback(
+                    ItemTouchHelper.UP or ItemTouchHelper.DOWN,0
+                ){
+                    override fun onMove(
+                        recyclerView: RecyclerView,
+                        dragged: RecyclerView.ViewHolder,
+                        target: RecyclerView.ViewHolder
+                    ): Boolean {
+                        val draggedPosition=dragged.adapterPosition
+                        val targetPosition=target.adapterPosition
+                        if(mPositionDraggedFrom==-1){
+                            mPositionDraggedFrom=draggedPosition
+                        }
+                        mPositionDraggedTo=targetPosition
+                        Collections.swap(list[holder.adapterPosition].cards,draggedPosition,targetPosition)
+                        adapter.notifyItemMoved(draggedPosition,targetPosition)
+                        return false
+                    }
+
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun clearView(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder
+                    ) {
+                        super.clearView(recyclerView, viewHolder)
+                        if(mPositionDraggedFrom!=-1 && mPositionDraggedTo!=-1 &&mPositionDraggedFrom!=mPositionDraggedTo){
+                            (context as TaskListActivity).updateCardsInTaskList(position,list[position].cards)
+
+                        }
+                        mPositionDraggedTo=-1
+                        mPositionDraggedFrom=-1
+                    }
+
+
+                }
+            )
+            helper.attachToRecyclerView(holder.itemView.findViewById(R.id.rv_card_list))
+
         }
     }
     private fun alertDialogForDeleteList(position: Int, title: String) {
