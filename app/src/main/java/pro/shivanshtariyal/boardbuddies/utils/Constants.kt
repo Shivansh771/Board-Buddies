@@ -21,7 +21,9 @@ object Constants {
     const val TASK_LIST:String="taskList"
     const val BOARD_DETAIL:String="board_detail"
     const val ID:String="id"
-
+    const val FCMTOKENUPDATED="fcmTokenUpdated"
+    const val FCMTOKEN="fcm"
+    const val BOARDBUDDIES_PREFERENCES="BoardBuddiesPref"
     const val SELECT:String="Select"
     const val UN_SELECT:String="UnSelect"
     const val EMAIL:String="email"
