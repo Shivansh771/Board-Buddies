@@ -2,6 +2,19 @@
 A visual project management tool.
 
 
+Authenticate
+
+
+
+
+
+
+
+![image](https://github.com/Shivansh771/Board-Buddies/assets/76002564/18b286b6-4698-4f93-88bc-27d7e4f4e88f)
+
+
+
+
 
 Create boards,
 
